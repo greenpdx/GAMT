@@ -6,9 +6,14 @@ import { HttpModule } from '@angular/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
+import { Three3dComponent } from './three3d.component';
+import { DataService } from './data-service.service';
+
+
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    Three3dComponent
   ],
   imports: [
     BrowserModule,
@@ -16,7 +21,7 @@ import { AppComponent } from './app.component';
     HttpModule,
     AppRoutingModule
   ],
-  providers: [],
+  providers: [DataService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
