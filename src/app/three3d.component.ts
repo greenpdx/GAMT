@@ -44,6 +44,9 @@ export class Three3dComponent implements OnInit {
     ib_x: number;
     ib_y: number;
     ib_zoom: string;
+    ib_name: string;
+    ib_sum: number;
+    ib_subs: number;
 
     constructor(private service3d: Three3dService) {
         this.sceneSettings = {
@@ -121,7 +124,7 @@ export class Three3dComponent implements OnInit {
         this.orbit = new OrbitControls(this.camera, this.renderer.domElement);
         this.service3d.orbit = this.orbit;
 
-        this.grid.build(6)
+        this.grid.build(0)
         this.grid.grid.visible = true;
         this.scene.add(this.grid.grid);
 
@@ -136,9 +139,9 @@ export class Three3dComponent implements OnInit {
         this.infoBox.style.top = xy.y.toString()+"px";
         this.infoBox.style.left = xy.x.toString()+"px";
         this.ib_id = hov.uniqueID;
-        this.ib_q = hov.q;
-        this.ib_r = hov.r;
-        this.ib_s = hov.s;
+        this.ib_name = hov.info.name;
+        this.ib_sum = hov.info.sum/1000;
+        this.ib_subs = (hov.info.buru)? hov.info.buru.length: 0;
         this.ib_x = xy.x;
         this.ib_y = xy.y;
         this.ib_zoom = scale.toFixed(4);
