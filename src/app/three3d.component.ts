@@ -135,7 +135,7 @@ export class Three3dComponent implements OnInit {
         let xy = this.grid.cell2Screen(hov);
         let scale = 1; // 1/this.orbit.totalScale;
         xy = {'x': xy.x*scale + this.center3d.x, 'y': xy.y*scale + this.center3d.y};
-        console.log("IN ",hov.uniqueID, xy, this.orbit.totalScale, this.service3d.mouseLoc);
+        console.log("IN ",hov.uniqueID, xy, this.totalScale, this.service3d.mouseLoc);
         this.infoBox.style.top = xy.y.toString()+"px";
         this.infoBox.style.left = xy.x.toString()+"px";
         this.ib_id = hov.uniqueID;
