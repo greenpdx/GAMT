@@ -3,8 +3,15 @@
 </h1>
 <h3>{{code}}</h3>
 <router-outlet></router-outlet>
-<div style="height: 1000px">
-<three3d #three3d [appObj]="this" ></three3d>
-<div #container></div>
+<div style="display: flex;">
+    <div style="float: left;">
+        <div style="height: 600px; width: 600px">
+            <three3d #three3d [appObj]="this" ></three3d>
+            <div #container></div>
+        </div>
+    </div>
+    <div style="">
+        test
+    </div>
 </div>
 <p>End</p>

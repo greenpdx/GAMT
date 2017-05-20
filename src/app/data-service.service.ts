@@ -23,8 +23,8 @@ export class ReqOpts {
 
 @Injectable()
 export class DataService {
-    private rawUrl = `http://10.0.42.81:8181/docs/local/budget/full`;
-    //private rawUrl = `http://taxnvote.org/mongodb/full`;
+    //private rawUrl = `http://10.0.42.81:8181/docs/local/budget/full`;
+    private rawUrl = `http://taxnvote.org/mongodb/full`;
     private url: string = "";
     reqOpts: ReqOpts = new ReqOpts();
     alias: string;  // alias
