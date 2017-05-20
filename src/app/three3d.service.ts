@@ -26,10 +26,12 @@ export class Three3dService {
     height: number;
     top: number;
     mouseLoc: any;  // debug hex 2 screen
+    totalScale: number;
 
     @Output() focusOut: EventEmitter<any>;
     @Output() focusIn: EventEmitter<any>;
     @Output() chgValue: EventEmitter<any>;
+    @Output() chgWheel: EventEmitter<any>;
 
     constructor() {}
 
@@ -58,6 +60,7 @@ export class Three3dService {
         this.focusIn = new EventEmitter();
         this.focusOut = new EventEmitter();
         this.chgValue = new EventEmitter();
+        this.chgWheel = new EventEmitter();
 
         this._element.addEventListener('keydown', this.userEventHandler.bind(this), true);
         this._element.addEventListener('mousedown', this.userEventHandler.bind(this), true);
@@ -108,12 +111,14 @@ export class Three3dService {
         console.log("wheel");
         if ( evt.shiftKey ) {
             //console.log("W");
-            let hover = this._render.hoverObject.extdMesh;
+            let hover = this.hoverObject;
             if (hover) {
+                this.chgWheel.emit(evt);
                 let top = hover.children[1];
                 let cell = hover.children[0];
                 top.material.color.setHex(0x00cc00);
                 hover.cell.grow(-evt.deltaY);
+                this.totalScale = this.totalScale * (evt.deltaY)? 0.95: 1.05;
                 //removeTile(this.pickedObject);
                 //addTile(cel);
                 //this.pickedObject.cell.h += evt.deltaY;

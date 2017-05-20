@@ -33,7 +33,7 @@ export class Three3dComponent implements OnInit {
     camera: THREE.PerspectiveCamera;
     orbit: OrbitControls;
     center3d: any;
-
+    totalScale: number = 1;
     @Input() appObj: AppComponent;
 
     //infoBox stuff
@@ -133,7 +133,7 @@ export class Three3dComponent implements OnInit {
 
     inCell(hov) {
         let xy = this.grid.cell2Screen(hov);
-        let scale = 1/this.orbit.totalScale;
+        let scale = 1; // 1/this.orbit.totalScale;
         xy = {'x': xy.x*scale + this.center3d.x, 'y': xy.y*scale + this.center3d.y};
         console.log("IN ",hov.uniqueID, xy, this.orbit.totalScale, this.service3d.mouseLoc);
         this.infoBox.style.top = xy.y.toString()+"px";
@@ -146,10 +146,12 @@ export class Three3dComponent implements OnInit {
         this.ib_y = xy.y;
         this.ib_zoom = scale.toFixed(4);
         this.infoBox.style.visibility = "visible";
+        this.totalScale = this.totalScale * 1.05;
     }
 
     outCell(hov) {
         this.infoBox.style.visibility = "hidden";
+        this.totalScale = this.totalScale * 0.95;
 
         console.log("OUT ",hov.uniqueID);
 
