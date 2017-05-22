@@ -72,7 +72,7 @@ export class Three3dComponent implements OnInit {
         this.scene = new THREE.Scene();
         this.scene.add(new THREE.AmbientLight(0xffffff));
         let light = new THREE.DirectionalLight(0xffffff);
-        this.scene.add(light);
+        //this.scene.add(light);
         this.service3d.scene = this.scene;
 
         let mat = new THREE.MeshPhongMaterial({
@@ -112,8 +112,9 @@ export class Three3dComponent implements OnInit {
         this.chgValue.subscribe(hov => this.chgCell(hov));
 
         this.camera = new THREE.PerspectiveCamera( 70, width / height, 1, 3000 );
+        this.camera.position.x = 0;
         this.camera.position.y = -350;
-        this.camera.position.z = 350;
+        this.camera.position.z = 500;
         this.service3d.camera = this.camera;
 
             //this.camera.target.position.y = 150;

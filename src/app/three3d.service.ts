@@ -163,6 +163,7 @@ export class Three3dService {
             //console.log(screenPosition.x, screenPosition.y);
             return;
         }
+        //this.camera.position.x = this.camera.position.x + 100;
         //screenPosition.y = this.screenPosition.y - this.element.offsetTop / 2;
         raycaster.setFromCamera(this.screenPosition, this._camera);
     //                var intersects = this.raycaster.intersectObject(this.group, true);

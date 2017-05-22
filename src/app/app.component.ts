@@ -1,14 +1,36 @@
 import { Component, ViewChild } from '@angular/core';
 
+import { TreeModel, TreeVirtualScroll, TreeNode, IActionMapping, ITreeOptions, KEYS, TREE_ACTIONS } from 'angular2-tree-component';
 import * as Nedb from 'nedb';
 
 import { DataService } from './data-service.service';
+import { SlideComponent } from './slide.component';
+
+const actionMapping: IActionMapping = {
+    mouse: {
+        contextMenu: (tree, node, $event) => {
+            console.log(`context menu ${node.data.name}`);
+        },
+        dblClick: (tree, node, $event) => {
+            if (node.hasChildren) {TREE_ACTIONS.TOGGLE_EXPANDED(tree, node, $event); };
+        },
+        click: (tree, node, $event) => {
+            $event.shiftKey
+                ? TREE_ACTIONS.TOGGLE_SELECTED_MULTI(tree, node, $event)
+                : TREE_ACTIONS.TOGGLE_SELECTED(tree, node, $event);
+        }
+    },
+    keys: {
+        [KEYS.ENTER]: (tree, node, $event) => {}
+    }
+};
+
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-  providers: [DataService]
+  providers: [DataService, TreeModel, TreeVirtualScroll]
 })
 export class AppComponent {
     title = 'U.S. Budget 2016, Discretionary';
@@ -16,6 +38,18 @@ export class AppComponent {
     @ViewChild('three3d') three3d: any;
     dataDB: Nedb;
     docs: Nedb;
+    tree: any;
+    trees: any;
+    nodes = [];
+
+    event: any;
+    initalizied: any;
+    //    options: any = { nodeClass: (node:TreeNode) => this.nodeClass(node), idField: '_id'};
+    options: any = { idField: '_id'};
+
+    selected: SlideComponent = null;
+
+
 
     constructor(private serviceData: DataService) {
         serviceData.hasAlias.subscribe(alias => {   // just testing
@@ -55,6 +89,11 @@ export class AppComponent {
             .sort({'agencyname': 1, 'bureauname': 1, 'acctname': 1}).exec(
                 function(err,doc) {
                     let rslt = self.parseData(self,doc);
+                    self.docs.insert(rslt, function(err, data) {
+                        if (err) {
+                            console.log('docs insert ',err)
+                        }
+                    });
                     rslt = rslt.sort((x,y) => {
                         return y.sum - x.sum;
                     });
@@ -80,6 +119,54 @@ export class AppComponent {
     }
 
     parseData(self, data) {
+        let doc = [];
+        let agcy: any = {'code':-1};
+        let buru: any = {'code':-1};
+        let acct: any = {'code':-1};
+        let subs: any = {'code':-1};
+
+        for (let itm of data) {
+            let val = itm['2016'];
+            subs = { 'code': itm.subfunccode,
+                'name': itm.subfunctitle,
+                'sum': val,
+                '_id': itm._id,
+                'tcode': itm.treasurycode,
+                'nf': itm.onoffbudget,
+                'bea': itm.beacat};
+
+            if (itm.onoffbudget != 'On-budget') {
+                let bob=1;
+                continue;
+            }
+
+            if (agcy.code != itm.agencycode) {
+                agcy = { 'code': itm.agencycode, 'name': itm.agencyname, 'sum': val, children: [], 'subs': subs, '_id': "A"+itm._id, ttop:null };
+                acct = { 'code': itm.acctcode, 'name': itm.acctname, 'sum': val, children: [], 'subs': [ subs ], '_id': "C"+itm._id, ttop: agcy};
+                buru = { 'code': itm.bureaucode, 'name': itm.bureauname, 'sum': val, children: [], 'subs': [subs], '_id': "B"+itm._id, ttop: agcy};
+                doc.push(agcy);
+            } else if (buru.code != itm.bureaucode) {
+                agcy.children.push(buru);
+                acct = { 'code': itm.acctcode, 'name': itm.acctname, 'sum': val, children: [], 'subs': [ subs ], '_id': "C"+itm._id, ttop: agcy};
+                buru = { 'code': itm.bureaucode, 'name': itm.bureauname, 'sum': val, children: [ acct ], '_id': "B"+itm._id, ttop: agcy };
+                agcy.sum += val;
+            } else if (acct.code != itm.acctcode) {
+                buru.children.push(acct);
+                acct = { 'code': itm.acctcode, 'name': itm.acctname, 'sum': val, children: [], 'subs': [ subs ], '_id': "C"+itm._id, ttop: agcy};
+                buru.sum += val;
+                agcy.sum += val;
+            } else {
+                acct.subs.push(subs);
+                acct.sum += val;
+                buru.sum += val;
+                agcy.sum += val;
+            }
+        }
+        return doc;
+    }
+
+
+/*    parseData(self, data) {
         let doc = [];
         let agcy: any = {'code':-1};
         let buru: any = {'code':-1};
@@ -127,15 +214,54 @@ export class AppComponent {
             }
         });
         return doc;
-    }
+    }*/
 
     buildGrid(doc) {
         let conf = {'cells':doc };
+        this.nodes = doc;
         this.three3d.buildGrid(conf);
 //        this.treeNodes = alph;
 //        this.tree.treeModel.update();
     }
 
+    onEvent(evt: any) {
+        let bob=1;
+        let slider: SlideComponent;
+        switch(evt.eventName) {
+        case 'onActivate':
+            if (this.selected) {
+                this.selected.selected = false;
+            }
+            slider = evt.node.comp;
+            this.selected = slider;
+            slider.selected = true;
+            break;
+        case 'onDeactivate':
+            slider = evt.node.comp;
+            slider.selected = false;
+            break;
+        case 'onBlur':
+            bob=4;
+        case 'onUpdateData':
+            bob=2;
+        case 'onInitialized':
+            bob=3;
+            let obj = evt.treeModel;
+        default:
+            console.log(evt.eventName);
+        }
+    }
+
+    nodeClass(node:TreeNode) {
+        let mynode:any = node;
+        return mynode.comp;
+    }
+
+    onInit(tree) {
+        const bob = 1;
+        this.tree = tree;
+        this.trees.push(tree);
+    }
 
 
     focusIn(cell) {
