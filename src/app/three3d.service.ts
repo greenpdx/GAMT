@@ -132,25 +132,24 @@ export class Three3dService {
     }
 
     mouseDownHandler(evt: any) {
-        let render = this._render;
-        if (render.hoverObject.children) {
-            let mesh = render.hoverObject.children[1];
+        if (this.hoverObject.children) {
+            let mesh = this.hoverObject.extdMesh;
             if (evt.button === 0) {
-                if (render.selectedObject) {
+                if (this.selectedObject) {
                     mesh.material.color.setHex(0xff0000);
-                    render.selectedObject = null;
+                    this.selectedObject = null;
                 } else {
-                    render.selectedObject = render.hoverObject;
+                    this.selectedObject = this.hoverObject;
                     mesh.material.color.setHex(0x00cc00);
                 }
             }
 
-            if (evt.button === 2 && render.selectedObject) {
+            if (evt.button === 2 && this.selectedObject) {
                 mesh.material.color.setHex(0x444444);
             }
         }
 
-        render.update();
+        this.update();
         console.log("mouseDown");
         return false;
     }

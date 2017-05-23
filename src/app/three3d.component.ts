@@ -21,6 +21,8 @@ export class Three3dComponent implements OnInit {
     @Output() focusOut: EventEmitter<any>;
     focusIn: EventEmitter<any>;
     chgValue: EventEmitter<any>;
+    select: EventEmitter<any>;
+    unselect: EventEmitter<any>;
 
     sceneSettings: Object | any;
     renderer: THREE.WebGLRenderer;

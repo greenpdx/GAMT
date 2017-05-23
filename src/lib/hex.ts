@@ -133,6 +133,11 @@ export class Hex extends Cell {
         this.grow(h);
     }
 
+    chgTop(color) {
+        this.top.material.color.setHex(color);
+        this.top.material.needsUpdate = true;
+    }
+
     focusin(evt) {
         this.top.material.color.setHex(0xcc0000);
         this.top.material.needsUpdate = true;
