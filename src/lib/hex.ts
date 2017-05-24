@@ -138,6 +138,37 @@ export class Hex extends Cell {
         this.top.material.needsUpdate = true;
     }
 
+    setInfo(info) {
+        this.info = info;
+        info.chg.subscribe(
+            (evt) => { this.chgEvt(evt)},
+            (err) => { console.log(err)},
+            () => { console.log("DONE")}
+        )
+    }
+
+    chgEvt(evt) {
+        let bob=1;
+        switch(evt) {
+        case 'select':
+            this.chgTop(0x0000ff);
+            break;
+        case 'unselect':
+            this.chgTop(0xaaaaaa);
+            break;
+        case 'hover':
+            this.chgTop(0xff0000);
+            break;
+        case 'unhover':
+            this.chgTop(0xaaaaaa);
+            break;
+        case 'value':
+        case 'wheel':
+        default:
+            //console.log(evt);
+        }
+    }
+
     focusin(evt) {
         this.top.material.color.setHex(0xcc0000);
         this.top.material.needsUpdate = true;

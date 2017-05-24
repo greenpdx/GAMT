@@ -87,9 +87,4 @@ export class Cell {
     focusout(evt) {
 
     }
-
-    setInfo(info) {
-        this.info = info;
-    }
-
 }

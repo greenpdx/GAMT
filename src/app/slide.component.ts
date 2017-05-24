@@ -1,4 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { TreeModel, TreeVirtualScroll, TreeNode, IActionMapping, ITreeOptions, KEYS, TREE_ACTIONS } from 'angular2-tree-component';
+
 
 @Component({
     selector: 'lib-slider',
@@ -41,6 +43,29 @@ export class SlideComponent implements OnInit {
 
     ngOnChanges() {
         this.node['comp'] = this;
+        this.node.data.chg.subscribe(
+            (evt) => { this.chgEvt(evt)},
+            (err) => { console.log(err)},
+            () => {console.log("DONE")}
+        );
+    }
+
+    chgEvt(evt) {
+        let treeMod = this.node.treeModel;
+        switch(evt) {
+        case 'select':
+            treeMod.fireEvent({eventName: 'onActivate', node: this.node});
+            if (!treeMod.isExpanded(this.node)) {
+                treeMod.fireEvent({eventName: 'toggleExpanded', node: this.node});
+            }
+            break;
+        case 'unselect':
+            treeMod.fireEvent({ eventName: 'onDeactivate', node:this.node});
+            treeMod.fireEvent({eventName: 'toggleExpanded', node: this.node});
+            break;
+        default:
+            console.log(evt);
+        }
     }
 
     ngOnInit() {

@@ -132,20 +132,26 @@ export class Three3dService {
     }
 
     mouseDownHandler(evt: any) {
-        if (this.hoverObject.children) {
-            let mesh = this.hoverObject.extdMesh;
+        let hov = this.hoverObject;
+        let sel = this.selectedObject;
+        if (hov) {
+            let mesh = hov.extdMesh;
             if (evt.button === 0) {
-                if (this.selectedObject) {
-                    mesh.material.color.setHex(0xff0000);
+                if (sel === hov) {
+                    sel.info.chg.next('unselected')
+                    //mesh.material.color.setHex(0xff0000);
                     this.selectedObject = null;
-                } else {
-                    this.selectedObject = this.hoverObject;
-                    mesh.material.color.setHex(0x00cc00);
+                };
+                if (hov) {
+                    hov.info.chg.next("select")
+                    this.selectedObject = hov;
+                    //mesh.material.color.setHex(0x00cc00);
                 }
             }
 
-            if (evt.button === 2 && this.selectedObject) {
-                mesh.material.color.setHex(0x444444);
+            if (evt.button === 2 && sel) {
+                hov.info.chg.next('context')
+                //mesh.material.color.setHex(0x444444);
             }
         }
 
@@ -178,27 +184,23 @@ export class Three3dService {
             let group = object.group;
                     //let mesh: any = group.children[1];
             let cell = group.cell;
-            if (hov && hov != cell ) {
+            if (hov && hov != cell && sel != cell) {
                 // was hover now not
                 //focusout event to cell.
-                this.focusOut.emit(hov);
-                hov.focusout();
-                cell.focusin();
+                hov.info.chg.next("unhover")
                 this.hoverObject = cell;
-                this.focusIn.emit(cell);
+                cell.info.chg.next("hover");
             }
             if (!hov) {
-                cell.focusin();
-                this.focusIn.emit(cell);
+                cell.info.chg.next("hover");
                 this.hoverObject = cell;
             }
             if (hov == cell) {
                 return;
             }
         }
-        if (hov) {
-            hov.focusout();
-            this.focusOut.emit(hov);
+        if (hov && !sel ) {
+            hov.info.chg.next('unhover');
             this.hoverObject = null;
         }
 

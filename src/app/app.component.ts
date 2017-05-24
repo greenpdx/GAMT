@@ -5,6 +5,7 @@ import * as Nedb from 'nedb';
 
 import { DataService } from './data-service.service';
 import { SlideComponent } from './slide.component';
+import { DataDoc } from '../lib/data-doc';
 
 const actionMapping: IActionMapping = {
     mouse: {
@@ -15,6 +16,7 @@ const actionMapping: IActionMapping = {
             if (node.hasChildren) {TREE_ACTIONS.TOGGLE_EXPANDED(tree, node, $event); };
         },
         click: (tree, node, $event) => {
+            let bob=1;
             $event.shiftKey
                 ? TREE_ACTIONS.TOGGLE_SELECTED_MULTI(tree, node, $event)
                 : TREE_ACTIONS.TOGGLE_SELECTED(tree, node, $event);
@@ -75,36 +77,24 @@ export class AppComponent {
         this.docs = new Nedb(nedbOpts);
     }
 
-    init(data) {
-        let self = this;
-        this.dataDB.insert(data, function(err, data) {
-        if (err) {
-            console.log("Data Load Error ",err);
-            return;
+    tst(node: any): any {
+        let bob=1;
+        if (node.beacat != "Discretionary") {
+            return 0;
         }
-        self.dataDB.ensureIndex({fieldName: 'agencycode'}, function(err){})
-        self.dataDB.ensureIndex({fieldName: 'bureaucode'}, function(err){})
-        self.dataDB.ensureIndex({fieldName: 'acctcode', sparse: true}, function(err){})
-        self.dataDB.ensureIndex({fieldName: 'beacat'}, function(err){})
-        self.dataDB.find({'beacat':'Discretionary'})
-            .sort({'agencyname': 1, 'bureauname': 1, 'acctname': 1}).exec(
-                function(err,doc) {
-                    let rslt = self.parseData(self,doc);
-                    self.keys = rslt.keys;
-                    self.docs.insert(rslt.doc, function(err, data) {
-                        if (err) {
-                            console.log('docs insert ',err)
-                        }
-                    });
-                    let grid = rslt.doc.sort((x,y) => {
-                        return y.sum - x.sum;
-                    });
+        if (node.onoffbudget != "On-budget") {
+            return 0;
+        }
+        return node['2016'];
+    }
 
+    init(data) {
+        let dd = new DataDoc();
 
+        let tdoc = dd.groupData(data);
+        let tree = dd.bldTree(this.tst);
 
-                    self.buildGrid(grid);
-            });
-        });
+        this.buildGrid(tree);
     }
 
     ngAfterViewInit() {
@@ -149,12 +139,12 @@ export class AppComponent {
                 continue;
             }
 
-            let tagcy = { 'code': itm.agencycode, 'name': itm.agencyname, 'sum': val,
-                children: [], 'sub': sub, '_id': "A"+itm._id, ttop:null };
-            let tacct = { 'code': itm.acctcode, 'name': itm.acctname, 'sum': val,
-                children: [], 'sub': sub, '_id': "C"+itm._id, ttop: agcy};
-            let tburu = { 'code': itm.bureaucode, 'name': itm.bureauname, 'sum': val,
-                children: [], 'sub': sub, '_id': "B"+itm._id, ttop: agcy};
+            let tagcy = { 'code': itm.agencycode, 'name': itm.agencyname+" "+itm.agencycode,
+                'sum': val, children: [], 'sub': sub, '_id': "A"+itm._id, ttop:null };
+            let tacct = { 'code': itm.acctcode, 'name': itm.acctname+ " " + itm.acctcode,
+                'sum': val, children: [], 'sub': sub, '_id': "C"+itm._id, ttop: agcy};
+            let tburu = { 'code': itm.bureaucode, 'name': itm.bureauname+ " " + itm.bureaucode,
+                'sum': val, children: [], 'sub': sub, '_id': "B"+itm._id, ttop: agcy};
 
             if (agcy.code != itm.agencycode) {
                 agcy = tagcy;
