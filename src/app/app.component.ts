@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { TreeModel, TreeVirtualScroll, TreeNode, IActionMapping, ITreeOptions, KEYS, TREE_ACTIONS } from 'angular2-tree-component';
-import * as Nedb from 'nedb';
+
 
 import { DataService } from './data-service.service';
 import { SlideComponent } from './slide.component';
@@ -38,8 +38,6 @@ export class AppComponent {
     title = 'U.S. Budget 2016, Discretionary';
     code = "github.com/greenpdx/GAMT";
     @ViewChild('three3d') three3d: any;
-    dataDB: Nedb;
-    docs: Nedb;
     tree: any;
     trees: any;
     nodes = [];
@@ -73,8 +71,6 @@ export class AppComponent {
 
         let nedbOpts = {inMemoryOnly: true};
 
-        this.dataDB = new Nedb(nedbOpts);
-        this.docs = new Nedb(nedbOpts);
     }
 
     tst(node: any): any {
@@ -172,11 +168,11 @@ export class AppComponent {
     }
 
     getRec(id) {
-        this.dataDB.find({_id:id}).exec(
+/*        this.dataDB.find({_id:id}).exec(
             function(err,doc) {
                 if(err) {console.log("getRec",err)}
                 let bob=1;
-            });
+            });*/
 
     }
 
