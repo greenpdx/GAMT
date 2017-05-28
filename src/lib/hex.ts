@@ -54,7 +54,8 @@ export class Hex extends Cell {
             this.material = new THREE.MeshLambertMaterial({
                 color: 0x00ff00,
                 wireframe: false,
-                vertexColors: 0x000000
+                vertexColors: 0x000000,
+                side: THREE.DoubleSide
             });
         }
 
@@ -85,7 +86,9 @@ export class Hex extends Cell {
             bevelEnabled: false,
             bevelSize: 0.5,
             bevelSegments: 1,
-            bevelThickness: .5
+            bevelThickness: .5,
+            extrudeMaterial: 1,
+            material: 7
         };
 
         this.group = new THREE.Group();
@@ -107,8 +110,15 @@ export class Hex extends Cell {
         edges['group'] = this.group;
         this.extdMesh.add(edges);
 
-        this.topGeo = new THREE.ShapeGeometry(this.shape);
-        this.top = new THREE.Mesh(this.topGeo, mats[2]);
+
+//     this.topGeo = new THREE.ConeGeometry(25, -30, 6, 1, true, Math.PI/2 );
+        this.topGeo = new THREE.ConeGeometry(25, -30, 6, 1, true, Math.PI/2 );
+        let mtx = new THREE.Matrix4();
+        mtx.makeRotationX(Math.PI/2);
+        mtx.setPosition(new THREE.Vector3(0,0,-13));
+        this.topGeo.applyMatrix(mtx);
+        this.top = new THREE.Mesh(this.topGeo, new THREE.MeshNormalMaterial({side: THREE.FrontSide}));
+
         this.topGeo.colors = colors;
         this.top['group'] = this.group;
         this.top.position.z = this.height;
