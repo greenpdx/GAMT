@@ -1,13 +1,24 @@
-<h1>
-  {{title}}
-</h1>
-<h3>{{code}}</h3>
+<div style="display:inline-block;">
+    <div style="display:inline-block;font-size:1.5em;margin: .5em;">
+        <a href="http://savages.com" ><span> {{savages}} </span></a>
+        <a href="http://taxnvote.org"><span style="margin: 1em">{{tnvFull}}</span></a>
+  </div>
+  <div style="display:inline-block;">
+      <span style="font-size:1.2em;">  {{otitle}} </span>
+  </div><br/>
+
+  <span>Source code at <a href="http://github.com/greenpdx/GAMT">{{code}}</a></span>
+  <span><a href="http://github.com/greenpdx/taxnvote" style="float: right">github/greenpdx/taxnvote</a></span>
+
+</div>
 <router-outlet></router-outlet>
 <div style="display: flex;">
-    <div style="float: left;">
-        <div style="height: 600px; width: 600px">
-            <three3d #three3d [appObj]="this" ></three3d>
-            <div #container></div>
+    <div>
+        <div style="float: left;">
+            <div style="height: 600px; width: 600px">
+                <three3d #three3d [appObj]="this" ></three3d>
+                <div #container></div>
+            </div>
         </div>
     </div>
     <div style="">

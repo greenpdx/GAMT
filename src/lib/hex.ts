@@ -23,6 +23,7 @@ export class Hex extends Cell {
     top: any;
     points: any;
     extdMesh: any;
+    edgeMat: any;
 
     static readonly TAU = Math.PI * 2;
     static readonly SQRT3 = Math.sqrt(3);
@@ -64,11 +65,13 @@ export class Hex extends Cell {
             this.material,
             new THREE.MeshBasicMaterial({ color: 0xaaaaaa }),
             new THREE.MeshBasicMaterial({ color: 0x444444 }),
-            new THREE.MeshBasicMaterial({ color: 0x0000ff }),
+            new THREE.MeshNormalMaterial({ side: THREE.DoubleSide }),
             new THREE.MeshBasicMaterial({ color: 0xffff00 }),
             new THREE.MeshPhongMaterial({ color: 0xffffff }),
             new THREE.MeshBasicMaterial({transparent:true, opacity: 0.0})
         ];
+
+        this.edgeMat = new THREE.LineBasicMaterial({color:0x000000, linewidth:2});;
 
         let colors = [
             0x000000,
@@ -92,39 +95,21 @@ export class Hex extends Cell {
         };
 
         this.group = new THREE.Group();
+        this.group.name = '';
         /* Make hex*/
-        this.extdGeo = new THREE.ExtrudeGeometry(this.shape, extset);
+        this.extdGeo = new THREE.CylinderGeometry(25,25,1,6,1,true);
         this.extdMesh = new THREE.Mesh(this.extdGeo, null);
         this.extdMesh.material = mats;
-        // bottom faces 0 - 3
-        // top faces 4-7 make extruded transparent
-        this.extdGeo.faces[4].materialIndex = 7;
-        this.extdGeo.faces[5].materialIndex = 7;
-        this.extdGeo.faces[6].materialIndex = 7;
-        this.extdGeo.faces[7].materialIndex = 7;
+        this.extdMesh.add(this.drawEdges(this.extdGeo));
         this.extdMesh['group'] = this.group;
-
-        let egeo = new THREE.EdgesGeometry(this.extdGeo,1);
-        let emat = new THREE.LineBasicMaterial({color:0x000000, linewidth:2});
-        let edges = new THREE.LineSegments(egeo, emat);
-        edges['group'] = this.group;
-        this.extdMesh.add(edges);
-
-
-//     this.topGeo = new THREE.ConeGeometry(25, -30, 6, 1, true, Math.PI/2 );
-        this.topGeo = new THREE.ConeGeometry(25, -30, 6, 1, true, Math.PI/2 );
-        let mtx = new THREE.Matrix4();
-        mtx.makeRotationX(Math.PI/2);
-        mtx.setPosition(new THREE.Vector3(0,0,-13));
-        this.topGeo.applyMatrix(mtx);
-        this.top = new THREE.Mesh(this.topGeo, new THREE.MeshNormalMaterial({side: THREE.FrontSide}));
-
-        this.topGeo.colors = colors;
+        this.extdMesh.position.y = 0;
+        this.extdMesh.name = 'cyl';
+        //make top
+        this.topGeo = new THREE.CylinderGeometry(25,0,10,6,1,true);
+        this.top = new THREE.Mesh(this.topGeo, mats[4]);
         this.top['group'] = this.group;
-        this.top.position.z = this.height;
-
-
-        //this.extdMesh.add(this.top);
+        this.top.position.y = h;
+        this.top.name="top";
 
         this.group.add(this.extdMesh);
         this.group.add(this.top);
@@ -132,10 +117,16 @@ export class Hex extends Cell {
         this.cell = this.group;
 
         if (q != 0 || r != 0 || s != 0) {
-            this.positionHex(q, r, s, );
+            this.positionHex(q, s, r, );
         } else {
-            //this.grow(30);
+            this.grow(30);
         }
+    }
+
+    drawEdges(obj) {
+        let edges = new THREE.EdgesGeometry(obj,1);
+        let line = new THREE.LineSegments(edges, this.edgeMat);
+        return line;
     }
 
     setHeight(h: number) {
@@ -144,7 +135,7 @@ export class Hex extends Cell {
     }
 
     chgTop(color) {
-        this.top.material.color.setHex(color);
+//        this.top.material.color.setHex(color);
         this.top.material.needsUpdate = true;
     }
 
@@ -211,9 +202,8 @@ export class Hex extends Cell {
     }
 
     positionHex(q = 0, r = 0, s = 0) {
-        this.cell.position.x = q * this.size * Hex.SQRT3 * (Hex.SQRT3 / 2);
-        this.cell.position.y = (s - r) * this.size * (Hex.SQRT3 / 2);
-        //this.hex.position.y = 10;
+        this.cell.position.z = (q) * this.size * Hex.SQRT3 * (Hex.SQRT3 / 2);
+        this.cell.position.x = (s - r) * this.size * (Hex.SQRT3 / 2);
     }
 
     // pre-computed permutations
@@ -229,10 +219,11 @@ export class Hex extends Cell {
         if (this.height + h < 1 ) {
             return this.height;
         }
-
-        let geo = this.topGeo;
-        geo.verticesNeedUpdate = true;
-        let tverts = geo.vertices;
+        if (1==1) {
+            //return;
+        }
+        let geo = this.top;
+        geo.position.y = h - 5;
 
         let mesh = this.extdMesh;
         geo = mesh.geometry;
@@ -241,16 +232,12 @@ export class Hex extends Cell {
 
         this.height = h + this.height;
         for (let i = 0; i < 6; i++) {
-            cverts[i].z = h + cverts[i].z;
-            tverts[i].z = h + tverts[i].z;
+            cverts[i].y = h + cverts[i].y;
         }
         // update edges
-        let pts = mesh.children[0].geometry.attributes.position.array;
-        for (let i=0;i<36;i++) {
-            if (pts[3*i+2] != 0) {
-                pts[3*i+2] += h;
-            }
-        }
+        mesh.remove(mesh.children[0]);
+        mesh.add(this.drawEdges(mesh.geometry));
+
         return this.height;
     }
     //set position(x,y,z) {

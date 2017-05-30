@@ -38,6 +38,11 @@ export class Three3dComponent implements OnInit {
     totalScale: number = 1;
     @Input() appObj: AppComponent;
 
+    hovLight: THREE.PointLight;
+    selLight: THREE.PointLight;
+    selLoc: any;
+    hovLov: any;
+
     //infoBox stuff
     ib_id: number;
     ib_r: number;
@@ -74,7 +79,11 @@ export class Three3dComponent implements OnInit {
         this.scene = new THREE.Scene();
         this.scene.add(new THREE.AmbientLight(0xffffff));
         let light = new THREE.DirectionalLight(0xffffff);
-        //this.scene.add(light);
+        this.scene.add(light);
+        this.hovLight = new THREE.PointLight(0xffaaaa,1,30,2);
+        this.selLight = new THREE.PointLight(0x8888ff,1,30,2);
+        this.scene.add(this.hovLight);
+        this.scene.add(this.selLight);
         this.service3d.scene = this.scene;
 
         let mat = new THREE.MeshPhongMaterial({
@@ -115,7 +124,7 @@ export class Three3dComponent implements OnInit {
 
         this.camera = new THREE.PerspectiveCamera( 70, width / height, 1, 3000 );
         this.camera.position.x = 0;
-        this.camera.position.y = -350;
+        this.camera.position.y = 350;
         this.camera.position.z = 500;
         this.service3d.camera = this.camera;
 
@@ -127,9 +136,14 @@ export class Three3dComponent implements OnInit {
         this.orbit = new OrbitControls(this.camera, this.renderer.domElement);
         this.service3d.orbit = this.orbit;
 
-        this.grid.build(0)
+        this.grid.build(0);
         this.grid.grid.visible = true;
         this.scene.add(this.grid.grid);
+
+        let axis = new THREE.AxisHelper(200);
+        axis['group'] = null;
+        this.scene.add(axis);
+
 
         this.service3d.update();
     }

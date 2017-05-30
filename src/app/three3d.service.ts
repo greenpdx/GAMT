@@ -182,6 +182,9 @@ export class Three3dService {
             // looks like 6, 4 lines and 2 mesh
             let object: any = intersects[0].object;
             let group = object.group;
+            if (!group) {
+                return;
+            }
                     //let mesh: any = group.children[1];
             let cell = group.cell;
             if (hov && hov != cell && sel != cell) {
