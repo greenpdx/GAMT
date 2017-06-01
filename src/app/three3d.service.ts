@@ -68,6 +68,9 @@ export class Three3dService {
         this._element.addEventListener('wheel', this.userEventHandler.bind(this), true);
         this._element.addEventListener('mouseup', this.userEventHandler.bind(this), true);
         this._element.addEventListener('mousemove', this.userEventHandler.bind(this), true);
+        this._element.addEventListener('click', this.userEventHandler.bind(this), true);
+        this._element.addEventListener('dblclick', this.userEventHandler.bind(this), true);
+        this._element.addEventListener('auxclick', this.userEventHandler.bind(this), true);
     }
 
     userEventHandler( evt: Event) {
@@ -82,14 +85,25 @@ export class Three3dService {
             this.keyDownHandler(evt);
             break;
         case 'mousedown':
-            this.mouseDownHandler(evt);
-            console.log("mousedown");
+            //this.mouseDownHandler(evt);
+            //console.log("mousedown");
             break;
         case 'mouseup':
-            console.log('mouseup')
+            //console.log('mouseup')
             break;
         case 'contextmenu':
             console.log('contextmenu');
+            break;
+        case 'click':
+            this.clickHandler(evt);
+            console.log('click');
+            break;
+        case 'dblclick':
+            this.dblclickHandler(evt);
+            console.log('dblClick');
+            break;
+        case 'auxclick':
+            console.log('auxclick');
             break;
         default:
             console.log("default user event");
@@ -111,14 +125,14 @@ export class Three3dService {
         console.log("wheel");
         if ( evt.shiftKey ) {
             //console.log("W");
-            let hover = this.hoverObject;
-            if (hover) {
-                this.chgWheel.emit(evt);
-                let top = hover.children[1];
-                let cell = hover.children[0];
-                top.material.color.setHex(0x00cc00);
-                hover.cell.grow(-evt.deltaY);
-                this.totalScale = this.totalScale * (evt.deltaY)? 0.95: 1.05;
+            let sel = this.selectedObject;
+            if (sel) {
+                //this.chgWheel.emit(evt);
+                //let top = hover.children[1];
+                //let cell = hover.children[0];
+                //top.material.color.setHex(0x00cc00);
+                //hover.cell.grow(-evt.deltaY);
+                //this.totalScale = this.totalScale * (evt.deltaY)? 0.95: 1.05;
                 //removeTile(this.pickedObject);
                 //addTile(cel);
                 //this.pickedObject.cell.h += evt.deltaY;
@@ -131,47 +145,41 @@ export class Three3dService {
         return false;
     }
 
-    mouseDownHandler(evt: any) {
+    clickHandler(evt: any) {
         let hov = this.hoverObject;
         let sel = this.selectedObject;
         if (hov) {
             let mesh = hov.extdMesh;
             if (evt.button === 0) {
                 if (sel === hov) {
-                    sel.info.chg.next('unselected')
-                    //mesh.material.color.setHex(0xff0000);
+                    sel.data.next({action:'unselected',data:sel});
                     this.selectedObject = null;
-                };
+                } else
                 if (hov) {
-                    hov.info.chg.next("select")
+                    hov.data.next({action:"select",data:hov});
                     this.selectedObject = hov;
-                    //mesh.material.color.setHex(0x00cc00);
                 }
             }
 
             if (evt.button === 2 && sel) {
-                hov.info.chg.next('context')
-                //mesh.material.color.setHex(0x444444);
+                hov.data.next({action:'context',data:hov});
             }
         }
 
         this.update();
-        console.log("mouseDown");
         return false;
+    }
+
+    dblclickHandler(evt: any) {
     }
 
     ctlupdate() {
         let raycaster = this.raycaster;
         let screenPosition = this.screenPosition;
-        if (isNaN(screenPosition.x) || isNaN(screenPosition.y)
-    /*|| screenPosition.x < 0 || screenPosition.y < 0*/ ) {
-            //console.log(screenPosition.x, screenPosition.y);
+        if (isNaN(screenPosition.x) || isNaN(screenPosition.y)) {
             return;
         }
-        //this.camera.position.x = this.camera.position.x + 100;
-        //screenPosition.y = this.screenPosition.y - this.element.offsetTop / 2;
         raycaster.setFromCamera(this.screenPosition, this._camera);
-    //                var intersects = this.raycaster.intersectObject(this.group, true);
         let scene = this._scene;
         let intersects = raycaster.intersectObject(scene, true);
         let hov = this.hoverObject;
@@ -179,35 +187,33 @@ export class Three3dService {
 
         if (intersects.length > 0) {
             // change each intersect object
-            // looks like 6, 4 lines and 2 mesh
             let object: any = intersects[0].object;
             let group = object.group;
             if (!group) {
                 return;
             }
-                    //let mesh: any = group.children[1];
             let cell = group.cell;
-            if (hov && hov != cell && sel != cell) {
+
+            if (hov && hov != cell) {
                 // was hover now not
                 //focusout event to cell.
-                hov.info.chg.next("unhover")
+                if (cell != sel) {
+                    hov.data.next({action:"unhover",data:hov});
+                }
                 this.hoverObject = cell;
-                cell.info.chg.next("hover");
+                cell.data.next({action:"hover",data:cell});
             }
             if (!hov) {
-                cell.info.chg.next("hover");
+                cell.data.next({action:"hover",data:cell});
                 this.hoverObject = cell;
             }
             if (hov == cell) {
                 return;
             }
-        }
-        if (hov && !sel ) {
-            hov.info.chg.next('unhover');
+        } else if (hov && !sel ) {
+            hov.data.next({action:'unhover',data:hov});
             this.hoverObject = null;
         }
-
-
     }
 
 

@@ -8,119 +8,67 @@ import * as THREE from 'three';
 import { Cell } from '../lib/cell';
 
 export class Hex extends Cell {
-    geometry: THREE.Geometry;
-    material: THREE.MeshLambertMaterial;
     position: any;
     height: number;
-    shape: any;
-    extdGeo: any;
+    cylGeo: any;
     cell: any;
     size: number;
-    geo: any;
     lines: any;
     group: THREE.Group;
     topGeo: any;
     top: any;
     points: any;
-    extdMesh: any;
+    cyl: any;
     edgeMat: any;
+    selected: boolean = false;
+    hovered: boolean = false;
+    mats: any;
 
     static readonly TAU = Math.PI * 2;
     static readonly SQRT3 = Math.sqrt(3);
 
-    constructor(id = null, q = 0, r = 0, s = 0) {
-        super(q, r, s, id);
-        let n = Hex.findNeighbors({x:q,y:r,z:s});
+    constructor(conf: any, data?: any, pos?: any) {
+        super(data, pos.q, pos.r, pos.s);
+        let n = Hex.findNeighbors({x:pos.q,y:pos.r,z:pos.s});
         this.neighbors = n;
         let h = 5;
         this.height = h;
         this.size = 25;
-
-        let verts = [];
-
-        // create the skeleton of the hex
-        for (let i = 0; i < 6; i++) {
-            verts.push(this._createVertex(i));
-        }
-        // copy the verts into a shape for the geometry to use
-        this.shape = new THREE.Shape();
-        this.shape.moveTo(verts[0].x, verts[0].y);
-        for (let i = 1; i < 6; i++) {
-            this.shape.lineTo(verts[i].x, verts[i].y);
-        }
-        this.shape.lineTo(verts[0].x, verts[0].y);
-        this.shape.autoClose = true;
-
-        if (!this.material) {
-            this.material = new THREE.MeshLambertMaterial({
-                color: 0x00ff00,
-                wireframe: false,
-                vertexColors: 0x000000,
-                side: THREE.DoubleSide
-            });
-        }
-
-        let mats = [
-            this.material,
-            this.material,
-            new THREE.MeshBasicMaterial({ color: 0xaaaaaa }),
-            new THREE.MeshBasicMaterial({ color: 0x444444 }),
-            new THREE.MeshNormalMaterial({ side: THREE.DoubleSide }),
-            new THREE.MeshBasicMaterial({ color: 0xffff00 }),
-            new THREE.MeshPhongMaterial({ color: 0xffffff }),
-            new THREE.MeshBasicMaterial({transparent:true, opacity: 0.0})
-        ];
-
-        this.edgeMat = new THREE.LineBasicMaterial({color:0x000000, linewidth:2});;
-
-        let colors = [
-            0x000000,
-            0x444444,
-            0xcccccc,
-            0xffff00,
-            0xff00ff,
-            0x00ffff,
-            0xffffff
-        ]
-
-        let extset = {
-            steps: 1,
-            amount: this.height,
-            bevelEnabled: false,
-            bevelSize: 0.5,
-            bevelSegments: 1,
-            bevelThickness: .5,
-            extrudeMaterial: 1,
-            material: 7
-        };
+        this.mats = conf.mats;
 
         this.group = new THREE.Group();
         this.group.name = '';
         /* Make hex*/
-        this.extdGeo = new THREE.CylinderGeometry(25,25,1,6,1,true);
-        this.extdMesh = new THREE.Mesh(this.extdGeo, null);
-        this.extdMesh.material = mats;
-        this.extdMesh.add(this.drawEdges(this.extdGeo));
-        this.extdMesh['group'] = this.group;
-        this.extdMesh.position.y = 0;
-        this.extdMesh.name = 'cyl';
+        this.cylGeo = new THREE.CylinderGeometry(25,25,1,6,1,true);
+        this.cyl = new THREE.Mesh(this.cylGeo, null);
+        this.cyl.material = conf.mats;
+        this.cyl.add(this.drawEdges(this.cylGeo));
+        this.cyl['group'] = this.group;
+        this.cyl.position.y = 0;
+        this.cyl.name = 'cyl';
         //make top
         this.topGeo = new THREE.CylinderGeometry(25,0,10,6,1,true);
-        this.top = new THREE.Mesh(this.topGeo, mats[4]);
+        this.top = new THREE.Mesh(this.topGeo, conf.mats[4]);
         this.top['group'] = this.group;
         this.top.position.y = h;
         this.top.name="top";
 
-        this.group.add(this.extdMesh);
+        this.group.add(this.cyl);
         this.group.add(this.top);
         this.group['cell'] = this;
         this.cell = this.group;
 
-        if (q != 0 || r != 0 || s != 0) {
-            this.positionHex(q, s, r, );
+        if (pos.q != 0 || pos.r != 0 || pos.s != 0) {
+            this.positionHex(pos.q, pos.s, pos.r );
         } else {
             this.grow(30);
         }
+        data.subscribe(
+            (evt) => { this.chgEvt(evt)},
+            (err) => { console.log(err)},
+            () => { console.log("DONE")}
+        )
+
     }
 
     drawEdges(obj) {
@@ -135,49 +83,40 @@ export class Hex extends Cell {
     }
 
     chgTop(color) {
-//        this.top.material.color.setHex(color);
+        this.top.material = this.mats[color];
         this.top.material.needsUpdate = true;
-    }
-
-    setInfo(info) {
-        this.info = info;
-        info.chg.subscribe(
-            (evt) => { this.chgEvt(evt)},
-            (err) => { console.log(err)},
-            () => { console.log("DONE")}
-        )
     }
 
     chgEvt(evt) {
         let bob=1;
-        switch(evt) {
+        switch(evt.action) {
         case 'select':
-            this.chgTop(0x0000ff);
+            this.selected = true;
+            this.chgTop(3);
             break;
         case 'unselect':
-            this.chgTop(0xaaaaaa);
+            this.selected = false;
+            this.chgTop(4);
             break;
         case 'hover':
-            this.chgTop(0xff0000);
+            if (this.selected) {
+                break;
+            }
+            this.hovered = true;
+            this.chgTop(5);
             break;
         case 'unhover':
-            this.chgTop(0xaaaaaa);
+            if (this.selected) {
+                break;
+            }
+            this.hovered = false;
+            this.chgTop(4);
             break;
         case 'value':
         case 'wheel':
         default:
             //console.log(evt);
         }
-    }
-
-    focusin(evt) {
-        this.top.material.color.setHex(0xcc0000);
-        this.top.material.needsUpdate = true;
-    }
-
-    focusout(evt) {
-        this.top.material.color.setHex(0xaaaaaa);
-        this.top.material.needsUpdate = true;
     }
 
     static neighbor(loc,dir) {
@@ -194,11 +133,6 @@ export class Hex extends Cell {
             n.push(d);
         }
         return n;
-    }
-
-    private _createVertex(i: number) {
-        var angle = (Hex.TAU / 6) * i;
-        return new THREE.Vector2((this.size * Math.cos(angle)), (this.size * Math.sin(angle)));
     }
 
     positionHex(q = 0, r = 0, s = 0) {
@@ -225,7 +159,7 @@ export class Hex extends Cell {
         let geo = this.top;
         geo.position.y = h - 5;
 
-        let mesh = this.extdMesh;
+        let mesh = this.cyl;
         geo = mesh.geometry;
         geo.verticesNeedUpdate = true;
         let cverts = geo.vertices.slice(6, 12);
@@ -240,7 +174,4 @@ export class Hex extends Cell {
 
         return this.height;
     }
-    //set position(x,y,z) {
-
-    //}
 }

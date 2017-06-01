@@ -43,7 +43,7 @@ export class SlideComponent implements OnInit {
 
     ngOnChanges() {
         this.node['comp'] = this;
-        this.node.data.chg.subscribe(
+        this.node.data.subscribe(
             (evt) => { this.chgEvt(evt)},
             (err) => { console.log(err)},
             () => {console.log("DONE")}
@@ -55,13 +55,13 @@ export class SlideComponent implements OnInit {
         switch(evt) {
         case 'select':
             treeMod.fireEvent({eventName: 'onActivate', node: this.node});
-            if (!treeMod.isExpanded(this.node)) {
-                treeMod.fireEvent({eventName: 'toggleExpanded', node: this.node});
-            }
+            //if (!treeMod.isExpanded(this.node)) {
+            //    treeMod.fireEvent({eventName: 'toggleExpanded', node: this.node});
+            //}
             break;
         case 'unselect':
             treeMod.fireEvent({ eventName: 'onDeactivate', node:this.node});
-            treeMod.fireEvent({eventName: 'toggleExpanded', node: this.node});
+            //treeMod.fireEvent({eventName: 'toggleExpanded', node: this.node});
             break;
         default:
             console.log(evt);

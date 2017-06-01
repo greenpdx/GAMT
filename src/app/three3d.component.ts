@@ -38,11 +38,6 @@ export class Three3dComponent implements OnInit {
     totalScale: number = 1;
     @Input() appObj: AppComponent;
 
-    hovLight: THREE.PointLight;
-    selLight: THREE.PointLight;
-    selLoc: any;
-    hovLov: any;
-
     //infoBox stuff
     ib_id: number;
     ib_r: number;
@@ -80,20 +75,38 @@ export class Three3dComponent implements OnInit {
         this.scene.add(new THREE.AmbientLight(0xffffff));
         let light = new THREE.DirectionalLight(0xffffff);
         this.scene.add(light);
-        this.hovLight = new THREE.PointLight(0xffaaaa,1,30,2);
-        this.selLight = new THREE.PointLight(0x8888ff,1,30,2);
-        this.scene.add(this.hovLight);
-        this.scene.add(this.selLight);
+//        this.hovLight = new THREE.PointLight(0xffaaaa,1,30,2);
+//        this.selLight = new THREE.PointLight(0x8888ff,1,30,2);
+
+//        this.scene.add(this.hovLight);
+//        this.scene.add(this.selLight);
         this.service3d.scene = this.scene;
 
-        let mat = new THREE.MeshPhongMaterial({
+        let mat0 = new THREE.MeshPhongMaterial({
             color:0x00cc88,
             opacity: 100
         });
-        //this.userEvt = new Subject();
 
-        this.grid = new HexGrid();
+        let mat1 = new THREE.MeshLambertMaterial({
+            color: 0xcc8800,
+            wireframe: false,
+            vertexColors: 0x000000,
+            side: THREE.DoubleSide
+        });
 
+        let mats = [
+            mat1,
+            mat1,
+            new THREE.MeshBasicMaterial({ color: 0xaaaaaa }),
+            new THREE.MeshBasicMaterial({ color: 0x444444, side: THREE.DoubleSide }),
+            new THREE.MeshNormalMaterial({ side: THREE.DoubleSide }),
+            new THREE.MeshBasicMaterial({ color: 0xffff00, side: THREE.BackSide }),
+            new THREE.MeshPhongMaterial({ color: 0xffffff }),
+            new THREE.MeshBasicMaterial({transparent:true, opacity: 0.0}),
+            new THREE.LineBasicMaterial({color:0x000000, linewidth:2})
+        ];
+
+        this.grid = new HexGrid(this, {mats:mats});
     }
 
     ngOnInit() {

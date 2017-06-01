@@ -24,12 +24,17 @@ export class Cell {
     protected diagonals: any;
     neighbors: any[];
     info: any;
+    data: any;
+    component: any;
 
-    constructor(q = 0, r = 0, s = 0, id = null) {
+    static mats; any;
+
+    constructor(data = null, q = 0, r = 0, s = 0) {
         this.q = q; // x grid coordinate (using different letters so that it won't be confused with pixel/world coordinates)
         this.r = r; // y grid coordinate
         this.s = s; // z grid coordinate
-        this.uniqueID = id;
+        this.uniqueID = data._id;
+        this.data = data;
         this.h = 10; // 3D height of the cell, used by visual representation and pathfinder, cannot be less than 1
 //        this.tile = null; // optional link to the visual representation's class instance
         this.userData = {}; // populate with any extra data needed in your game

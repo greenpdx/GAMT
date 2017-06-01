@@ -1,6 +1,60 @@
 import { Input, Output } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
+const enum DATA_ACTION {
+    HOVER,
+    UNHOVER,
+    SELECT,
+    UNSELECT,
+    CHGVALUE,
+    CONTEXT,
+    EXPAND
+}
+
+interface IDataAction {
+    action: string;
+    data: any;
+    id: any;
+}
+
+export class DataAction implements IDataAction {
+    protected _action: string;
+    protected _data: any;
+    protected _id: any;
+
+    get action(): string {
+        return this._action;
+    }
+    set action(act) {
+        this._action = act;
+    }
+    get data(): any {
+        return this._data;
+    }
+    set data(data) {
+        this._data = data;
+    }
+    get id(): any {
+        return this._id;
+    }
+    set id(id) {
+        this._id = id;
+    }
+}
+
+export class DataNode extends BehaviorSubject<any> {
+    name: string;
+    sum: number = 0;
+    children: DataNode[] = [];
+    _id: any;
+
+    constructor(name: string, id: any) {
+        super({action:'init',data:id});
+        this.name = name;
+        this._id = id;
+    }
+}
+
 export class DataDoc {
     keys: any;
     coll: any;
@@ -73,7 +127,8 @@ export class DataDoc {
     }
 
     sumTree(node, cb, akey?) {  // object has name and keys, maybe ids
-        let me = {name: node.name, sum:0, children:[], "_id": 0};
+        let me: DataNode;
+        let sum = 0;
         let chld = [];
         let id = 0;
         for (let bkey in node) {
@@ -82,33 +137,37 @@ export class DataDoc {
                 break;
             case 'ids':
                 for (let k of node.ids) {
-                    me.sum += cb(this.keys[k]);
+                    sum += cb(this.keys[k]);
                     id = k;
                 }
                 break;
             default:
                 let rslt = this.sumTree(node[bkey], cb, bkey);
                 if (rslt) {
-                    me.sum += rslt.sum;
+                    sum += rslt.sum;
                     id = rslt['_id']+akey;
                     chld.push(rslt);
                 }
             }
         }
-        if (me.sum == 0) {
+        if (sum == 0) {
             return null;
         }
+        me = new DataNode(node.name, id);
         me.children = chld.sort((a,b) => {
             return b.sum - a.sum;
         });
-        me['_id'] = id;
-        me['chg'] = new BehaviorSubject(id);
-        me['chg'].subscribe(
-            (evt) => {let bob=1;},
+        me.sum = sum;
+        me.subscribe(
+            (evt) => {this.debug(evt);},
             (err) => {console.log(id,err)},
             () => {console.log("DONE ",id)}
         );
         return me;
+    }
+
+    debug(evt) {
+        console.log(evt);
     }
 
     bldTree( cb: (node:any) => any) : any {
