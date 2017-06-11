@@ -47,7 +47,7 @@ export class Hex extends Cell {
         this.cyl.position.y = 0;
         this.cyl.name = 'cyl';
         //make top
-        this.topGeo = new THREE.CylinderGeometry(25,0,10,6,1,true);
+        this.topGeo = new THREE.CylinderGeometry(25,0.01,10,6,1,true);
         this.top = new THREE.Mesh(this.topGeo, conf.mats[4]);
         this.top['group'] = this.group;
         this.top.position.y = h;

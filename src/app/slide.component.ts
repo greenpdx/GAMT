@@ -1,6 +1,7 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output } from '@angular/core';
 import { TreeModel, TreeVirtualScroll, TreeNode, IActionMapping, ITreeOptions, KEYS, TREE_ACTIONS } from 'angular2-tree-component';
 
+import { DataNode } from '../lib/data-doc';
 
 @Component({
     selector: 'lib-slider',
@@ -38,11 +39,19 @@ export class SlideComponent implements OnInit {
     selValue: number;
     multy: number;
 
+    @Output() extra: any;
+
     constructor() {
+        this.extra =  {data: {}};
+
     }
 
     ngOnChanges() {
         this.node['comp'] = this;
+        if (!this.node.data) {
+            this.node.data = new DataNode("Surplus or Defict", '000000000');
+            this.selected = true;
+        }
         this.node.data.subscribe(
             (evt) => { this.chgEvt(evt)},
             (err) => { console.log(err)},

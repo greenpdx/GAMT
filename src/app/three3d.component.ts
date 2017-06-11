@@ -87,7 +87,7 @@ export class Three3dComponent implements OnInit {
             opacity: 100
         });
 
-        let mat1 = new THREE.MeshLambertMaterial({
+        let mat1 = new THREE.MeshPhongMaterial({
             color: 0xcc8800,
             wireframe: false,
             vertexColors: 0x000000,
