@@ -9,7 +9,7 @@ import { AppComponent } from './app.component';
 import { Three3dComponent } from './three3d.component';
 import { DataService } from './data-service.service';
 import { SlideComponent } from './slide.component';
-import { TreeModule } from 'angular2-tree-component';
+import { TreeModule } from 'angular-tree-component';
 import { TreeGridComponent } from './tree-grid.component';
 
 
