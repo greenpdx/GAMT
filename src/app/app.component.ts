@@ -36,8 +36,6 @@ const actionMapping: IActionMapping = {
 })
 
 export class AppComponent implements OnInit {
-    otitle = 'U.S. Budget 2016, Discretionary';
-    code = "github.com/greenpdx/GAMT";
     savages = "SavageS";
     tnvFull="Tax N Vote";
 

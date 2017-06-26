@@ -6,6 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styles: []
 })
 export class TNVInfoComponent implements OnInit {
+    code = "github.com/greenpdx/GAMT";
 
   constructor() { }
 

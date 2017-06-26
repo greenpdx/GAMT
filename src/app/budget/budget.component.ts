@@ -12,6 +12,7 @@ import { TreeGridComponent } from '../budget/tree-grid.component';
 })
 export class BudgetComponent implements OnInit {
     @ViewChild('three3d') three3d: Three3dComponent;
+    otitle = 'U.S. Budget 2016, Discretionary';
 
     tree: any;
     trees: any;

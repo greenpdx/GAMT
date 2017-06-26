@@ -1,15 +1,20 @@
-<div style="display: flex;">
-    <div>
-        <div style="float: left;">
-            <div style="height: 600px; width: 600px">
-                <three3d #three3d [appObj]="this" ></three3d>
-                <div #container></div>
+<div>
+    <div style="display:inline-block;">
+        <span style="font-size:1.2em;">  {{otitle}} </span>
+    </div>
+    <div style="display: flex;">
+        <div>
+            <div style="float: left;">
+                <div style="height: 600px; width: 600px">
+                    <three3d #three3d [appObj]="this" ></three3d>
+                    <div #container></div>
+                </div>
             </div>
         </div>
-    </div>
-    <div style="">
-        <div style="height:600px; width:1000px">
-            <tree-grid [nodes]="nodes"></tree-grid>
+        <div style="">
+            <div style="height:600px; width:1000px">
+                <tree-grid [nodes]="nodes"></tree-grid>
+            </div>
         </div>
     </div>
 </div>
