@@ -9,21 +9,7 @@
     </div>
     <div style="">
         <div style="height:600px; width:1000px">
-            <tree-grid></tree-grid>
-            <!--div>
-                <lib-slider #diff [node]=[extra]></lib-slider>
-            </div>
-            <tree-root #tree0
-                [nodes]="nodes"
-                [options]="options"
-                (event)="onEvent($event)"
-                (onEvent)="onEvent($event);"
-                (initialized)="onInit(three0)"
-                (activate)="onEvent($event);">
-                <ng-template #treeNodeTemplate let-node let-index="index">
-                    <lib-slider #nodeSlider [node]="node" [index]="index"></lib-slider>
-                </ng-template>
-            </tree-root-->
+            <tree-grid [nodes]="nodes"></tree-grid>
         </div>
     </div>
 </div>

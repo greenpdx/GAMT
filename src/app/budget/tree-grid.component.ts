@@ -60,7 +60,7 @@ export class TreeGridComponent implements OnInit {
     @ViewChild(TreeModel) treemod: any;
 
     selected: SlideComponent = null;
-    nodes: any = [];
+    @Input() nodes: any = [];
     event: any;
     initalizied: any;
     //    options: any = { nodeClass: (node:TreeNode) => this.nodeClass(node), idField: '_id'};

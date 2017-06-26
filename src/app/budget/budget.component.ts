@@ -3,6 +3,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { DataService } from '../data-service.service';
 import { DataDoc } from '../../lib/data-doc';
 import { Three3dComponent } from './three3d.component';
+import { TreeGridComponent } from '../budget/tree-grid.component';
 
 @Component({
   selector: 'budget',
@@ -17,11 +18,9 @@ export class BudgetComponent implements OnInit {
     nodes = [];
     keys: any[];
 
-
     event: any;
     initalizied: any;
     //    options: any = { nodeClass: (node:TreeNode) => this.nodeClass(node), idField: '_id'};
-    options: any = { idField: '_id'};
 
     constructor(private serviceData: DataService) {
         serviceData.hasAlias.subscribe(alias => {   // just testing
