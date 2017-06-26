@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output } from '@angular/core';
 import { TreeModel, TreeVirtualScroll, TreeNode, IActionMapping, ITreeOptions, KEYS, TREE_ACTIONS } from 'angular2-tree-component';
 
-import { DataNode } from '../lib/data-doc';
+import { DataNode } from '../../lib/data-doc';
 
 @Component({
     selector: 'lib-slider',

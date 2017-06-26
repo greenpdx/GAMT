@@ -4,9 +4,9 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three-orbitcontrols-ts';
 import { Observable, Observer, Subject, BehaviorSubject } from 'rxjs';
 
-import { AppComponent } from './app.component';
+import { AppComponent } from '../app.component';
 import { Three3dService } from './three3d.service'
-import { HexGrid } from '../lib/hexgrid';
+import { HexGrid } from '../../lib/hexgrid';
 
 @Component({
   selector: 'three3d',
@@ -116,7 +116,7 @@ export class Three3dComponent implements OnInit {
     }
 
     protected dataEvent(evt: any) {
-        
+
     }
 
     ngAfterViewInit() {

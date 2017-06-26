@@ -9,7 +9,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three-orbitcontrols-ts';
 import { Observable, Observer, Subject, BehaviorSubject } from 'rxjs';
 
-import { HexGrid } from '../lib/hexgrid';
+import { HexGrid } from '../../lib/hexgrid';
 
 @Injectable()
 export class Three3dService {

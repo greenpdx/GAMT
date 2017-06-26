@@ -34,6 +34,9 @@ const actionMapping: IActionMapping = {
 @Component({
     selector: 'tree-grid',
     template: `
+        <div>
+            <lib-slider #diff [node]=[extra]></lib-slider>
+        </div>
         <div style="display: inline;">
             <tree-root #tree0
                 [nodes]="nodes"

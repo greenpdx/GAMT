@@ -208,7 +208,7 @@ export class DataDoc {
     }
 
     debug(evt) {
-        console.log(evt);
+        //console.log(evt);
     }
 
     bldTree( cb: (node:any) => any) : any {

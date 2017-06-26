@@ -6,11 +6,15 @@ import { HttpModule } from '@angular/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-import { Three3dComponent } from './three3d.component';
 import { DataService } from './data-service.service';
-import { SlideComponent } from './slide.component';
+import { Three3dComponent } from './budget/three3d.component';
+import { SlideComponent } from './budget/slide.component';
+import { BudgetComponent } from './budget/budget.component';
+import { TreeGridComponent } from './budget/tree-grid.component';
 import { TreeModule } from 'angular2-tree-component';
-import { TreeGridComponent } from './tree-grid.component';
+import { AuthorsComponent } from './authors/authors.component';
+import { AuthorComponent } from './authors/author.component';
+import { TNVInfoComponent } from './tnvinfo/tnvinfo.component';
 
 
 @NgModule({
@@ -18,7 +22,11 @@ import { TreeGridComponent } from './tree-grid.component';
     AppComponent,
     Three3dComponent,
     SlideComponent,
-    TreeGridComponent
+    TreeGridComponent,
+    AuthorsComponent,
+    TNVInfoComponent,
+    AuthorComponent,
+    BudgetComponent
   ],
   imports: [
     BrowserModule,
