@@ -6,7 +6,7 @@ import { Three3dComponent } from './three3d.component';
 import { TreeGridComponent } from '../budget/tree-grid.component';
 
 @Component({
-  selector: 'budget',
+  selector: 'voting',
   templateUrl: './budget.component.html',
   styles: []
 })

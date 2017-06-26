@@ -6,8 +6,8 @@ import { AuthorsComponent } from './authors/authors.component';
 import { TNVInfoComponent } from './tnvinfo/tnvinfo.component';
 
 const routes: Routes = [
-    { path: '', redirectTo: '3D', pathMatch: 'full'},
-    { path: 'budget', component: BudgetComponent },
+    { path: '', redirectTo: 'voting', pathMatch: 'full'},
+    { path: 'voting', component: BudgetComponent },
     { path: 'authors', component: AuthorsComponent },
     { path: 'tnvinfo', component: TNVInfoComponent }
 ];

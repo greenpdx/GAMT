@@ -34,22 +34,24 @@ const actionMapping: IActionMapping = {
 @Component({
     selector: 'tree-grid',
     template: `
-        <div>
-            <lib-slider #diff [node]=[extra]></lib-slider>
-        </div>
-        <div style="display: inline;">
-            <tree-root #tree0
-                [nodes]="nodes"
-                [options]="options"
-                (onEvent)="onEvent($event);"
-                (onToggleExpanded)="toggleExpand($event)"
-                (onSelected)="selectData($event)"
-                (onActiveChange)="chgData($event)"
-                >
-                <ng-template #treeNodeTemplate let-node let-index="index">
-                    <lib-slider #nodeSlider [node]="node" [index]="index"></lib-slider>
-                </ng-template>
-            </tree-root>
+        <div style="display:inline;">
+            <div>
+                <lib-slider #diff [node]=[extra]></lib-slider>
+            </div>
+            <div style="display: inline">
+                <tree-root #tree0
+                    [nodes]="nodes"
+                    [options]="options"
+                    (onEvent)="onEvent($event);"
+                    (onToggleExpanded)="toggleExpand($event)"
+                    (onSelected)="selectData($event)"
+                    (onActiveChange)="chgData($event)"
+                    >
+                    <ng-template #treeNodeTemplate let-node let-index="index">
+                        <lib-slider #nodeSlider [node]="node" [index]="index"></lib-slider>
+                    </ng-template>
+                </tree-root>
+            </div>
         </div>
     `,
   styles: [],
