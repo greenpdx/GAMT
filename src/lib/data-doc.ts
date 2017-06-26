@@ -1,14 +1,14 @@
 import { Input, Output } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscriber, Subscription } from 'rxjs';
 
 const enum DATA_ACTION {
-    HOVER,
-    UNHOVER,
-    SELECT,
-    UNSELECT,
-    CHGVALUE,
-    CONTEXT,
-    EXPAND
+    "HOVER",
+    "UNHOVER",
+    "SELECT",
+    "UNSELECT",
+    "CHGVALUE",
+    "CONTEXT",
+    "EXPAND"
 }
 
 interface IDataAction {
@@ -42,24 +42,61 @@ export class DataAction implements IDataAction {
     }
 }
 
-export class DataNode extends BehaviorSubject<any> {
+export class DataNode {
     name: string;
     sum: number = 0;
     children: DataNode[] = [];
     _id: any;
+    protected _component: any;
+    parent: DataNode;
+    protected _event: BehaviorSubject<any>;
+    protected _map: any;
 
-    constructor(name: string, id: any) {
-        super({action:'init',data:id});
+    constructor(name: string, id: any, component: any) {
+        //super({action:'init',data:id});
         this.name = name;
         this._id = id;
+        this._component = component;
+        this._event = new BehaviorSubject({action:'init', data: id});
+        this._map = this._event.map(this.mapEvent);
     }
+
+    mapEvent(evt, what) {
+        let bob=1;
+        // this will handle event redistribution
+        return evt;
+    }
+
+    filterErr(err) {
+
+    }
+
+    subscribe(doEvent, doError, doDone): Subscription {
+        let bob=1;
+        return this._map.subscribe(
+            (evt) => doEvent(evt),
+            (err) => doError(err),
+            () => doDone()
+        );
+    }
+
+    next(evt) {
+        this._event.next(evt);
+    }
+
 }
 
 export class DataDoc {
     keys: any;
     coll: any;
+    protected _three3d: any;
+    rootData: any;
 
-    constructor() {}
+    constructor(three3d: any) {
+        this._three3d = three3d;
+        this.rootData = new DataNode("Surplus or Defict", '000000000', three3d);
+        this.rootData.parent = null;
+    }
 
     setData(data) {
 
@@ -127,10 +164,11 @@ export class DataDoc {
     }
 
     sumTree(node, cb, akey?) {  // object has name and keys, maybe ids
-        let me: DataNode;
+        let me  = null;
         let sum = 0;
         let chld = [];
         let id = 0;
+        //me = new DataNode(node.name, id, this._three3d);
         for (let bkey in node) {
             switch(bkey) {
             case 'name':
@@ -147,13 +185,16 @@ export class DataDoc {
                     sum += rslt.sum;
                     id = rslt['_id']+akey;
                     chld.push(rslt);
+                    //rslt.parent = me;
                 }
             }
         }
         if (sum == 0) {
+            me = undefined;
             return null;
         }
-        me = new DataNode(node.name, id);
+        me = new DataNode(node.name, id, this._three3d);
+        chld.forEach(function(nod,idx,ary) {nod.parent = me;});
         me.children = chld.sort((a,b) => {
             return b.sum - a.sum;
         });
@@ -176,10 +217,13 @@ export class DataDoc {
             let rslt = this.sumTree(this.coll[key],cb,key);
             if (rslt) {
                 tree.push(rslt);
+                rslt.parent = this.rootData;
             }
         }
-        return tree.sort((a,b) => {
+        tree.sort((a,b) => {
             return b.sum - a.sum;
         });
+        this.rootData.children = tree;
+        return tree;
     }
 }

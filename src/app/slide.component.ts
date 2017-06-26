@@ -47,11 +47,11 @@ export class SlideComponent implements OnInit {
     }
 
     ngOnChanges() {
-        this.node['comp'] = this;
         if (!this.node.data) {
-            this.node.data = new DataNode("Surplus or Defict", '000000000');
+            this.node.data = new DataNode("Surplus or Defict", '000000000', null);
             this.selected = true;
         }
+        this.node['comp'] = this;
         this.node.data.subscribe(
             (evt) => { this.chgEvt(evt)},
             (err) => { console.log(err)},
@@ -80,21 +80,29 @@ export class SlideComponent implements OnInit {
     ngOnInit() {
         this.defaultValue = this.node.data.sum/1000;
         this.maxValue = this.defaultValue * 1.25;
-        this.minValue = this.defaultValue * 0.75;
+        this.minValue = 0;
         this.selValue = this.defaultValue;
         this.multy = this.maxValue - this.minValue;
     }
 
     sldclk(evt: Event) {
-        console.log(this.node.data);
+        //console.log(this.node.data);
         const ele = <HTMLInputElement>evt.currentTarget;
         let val: any = ele.value;
-        val = (val - 50) / 100 * this.multy;
-        this.selValue = val + this.defaultValue;
+        let cash = (val - 50) / 100 * this.multy;
+        this.selValue = cash + this.defaultValue;
         const chld = this.node.children;
         let mc = chld.length;
         const prnt = this.node.parent;
-        console.log(val);
+        console.log(prnt);
+
     }
 
+    adjustParent() {
+
+    }
+
+    adjustChildren() {
+
+    }
 }

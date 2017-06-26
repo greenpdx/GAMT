@@ -115,6 +115,10 @@ export class Three3dComponent implements OnInit {
 
     }
 
+    protected dataEvent(evt: any) {
+        
+    }
+
     ngAfterViewInit() {
         let ele = document.getElementById("three3d");
         this.element = ele;

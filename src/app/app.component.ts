@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { TreeModel, TreeVirtualScroll, TreeNode, IActionMapping, ITreeOptions, KEYS, TREE_ACTIONS } from 'angular2-tree-component';
 
@@ -34,7 +34,8 @@ const actionMapping: IActionMapping = {
   styleUrls: ['./app.component.css'],
   providers: [DataService, TreeModel, TreeVirtualScroll]
 })
-export class AppComponent {
+
+export class AppComponent implements OnInit {
     otitle = 'U.S. Budget 2016, Discretionary';
     code = "github.com/greenpdx/GAMT";
     savages = "SavageS";
@@ -52,8 +53,6 @@ export class AppComponent {
     options: any = { idField: '_id'};
 
     selected: SlideComponent = null;
-
-
 
     constructor(private serviceData: DataService) {
         serviceData.hasAlias.subscribe(alias => {   // just testing
@@ -73,7 +72,9 @@ export class AppComponent {
             .subscribe(data => this.init(data));
 
         let nedbOpts = {inMemoryOnly: true};
+    }
 
+    ngOnInit() {
     }
 
     tst(node: any): any {
@@ -88,7 +89,7 @@ export class AppComponent {
     }
 
     init(data) {
-        let dd = new DataDoc();
+        let dd = new DataDoc(this.three3d);
         //data = data.slice(0,1);
 
         let tdoc = dd.groupData(data);
