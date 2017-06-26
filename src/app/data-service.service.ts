@@ -11,6 +11,8 @@ import { Observable, Subject, BehaviorSubject }     from 'rxjs';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 
+import { environment } from '../environments/environment';
+
 export class ReqOpts {
     //count: boolean = true;
     skip: number = 0;
@@ -24,7 +26,8 @@ export class ReqOpts {
 @Injectable()
 export class DataService {
     //private rawUrl = `http://10.0.42.81:8181/docs/local/budget/full`;
-    private rawUrl = `http://taxnvote.org/mongodb/full`;
+    //private rawUrl = `http:/mongodb/full`;
+    private rawUrl = environment.DBURL;
     private url: string = "";
     reqOpts: ReqOpts = new ReqOpts();
     alias: string;  // alias
