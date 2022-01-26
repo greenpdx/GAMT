@@ -28,7 +28,7 @@
     "core-js": "^2.4.1",
     "nedb": "^1.8.0",
     "rxjs": "^5.4.0",
-    "three": "^0.85.2",
+    "three": "^1.25.0",
     "three-orbitcontrols": "^1.2.0",
     "three-orbitcontrols-ts": "^0.1.2",
     "zone.js": "^0.8.4"
